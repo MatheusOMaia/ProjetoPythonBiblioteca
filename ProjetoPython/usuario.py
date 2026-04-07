@@ -9,6 +9,3 @@ class Usuario:
         print(f"Nome: {self.nome}")
         print(f"Email: {self.email}")
         print("-" * 30)
-
-   # def __str__(self):
-    #    return f"{self.nome} ({self.email})"

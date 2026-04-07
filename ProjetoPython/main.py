@@ -1,4 +1,5 @@
 from biblioteca import Biblioteca
+import os
 
 def menu():
     biblioteca = Biblioteca()
@@ -15,6 +16,7 @@ def menu():
         print("0. Sair")
 
         opcao = input("Escolha uma opção: ")
+        os.system("cls")
 
         if opcao == "1":
             titulo = input("Título do livro: ")
@@ -56,6 +58,8 @@ def menu():
 
         else:
             print("Opção inválida. Tente novamente.")
+        input("\nPressione ENTER para continuar...")
+        os.system("cls")
 
 if __name__ == "__main__":
     menu()

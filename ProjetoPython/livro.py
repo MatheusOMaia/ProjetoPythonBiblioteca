@@ -13,6 +13,3 @@ class Livro:
         print(f"Autor: {self.autor}")
         print(f"Status: {status}")
         print("-" * 30)
-
-   # def __str__(self):
-    #    return f"{self.titulo} ({self.autor})"

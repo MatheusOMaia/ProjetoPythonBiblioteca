@@ -12,24 +12,21 @@ class Biblioteca:
         self.prox_id_usuario = 1
         self.prox_id_emprestimo = 1
 
-    # -------------------------
-    # CADASTROS
-    # -------------------------
+    # CADASTRAR LIVROS
     def cadastrar_livro(self, titulo, autor):
         livro = Livro(self.prox_id_livro, titulo, autor)
         self.livros.append(livro)
         self.prox_id_livro += 1
         print("Livro cadastrado com sucesso!")
 
+    # CADASTRAR USUARIO
     def cadastrar_usuario(self, nome, email):
         usuario = Usuario(self.prox_id_usuario, nome, email)
         self.usuarios.append(usuario)
         self.prox_id_usuario += 1
         print("Usuário cadastrado com sucesso!")
 
-    # -------------------------
-    # BUSCAS
-    # -------------------------
+    # BUSCAR LIVRO
     def buscar_livro(self, id):
         for livro in self.livros:
             if livro.id == id:
@@ -48,9 +45,7 @@ class Biblioteca:
                 return emp
         return None
 
-    # -------------------------
     # EMPRÉSTIMO
-    # -------------------------
     def realizar_emprestimo(self, id_usuario, id_livro):
         usuario = self.buscar_usuario(id_usuario)
         livro = self.buscar_livro(id_livro)
@@ -75,9 +70,7 @@ class Biblioteca:
         except Exception as e:
             print(f"Erro: {e}")
 
-    # -------------------------
     # DEVOLUÇÃO
-    # -------------------------
     def devolver_livro(self, id_emprestimo):
         emprestimo = self.buscar_emprestimo(id_emprestimo)
 
@@ -87,9 +80,7 @@ class Biblioteca:
 
         emprestimo.registrar_devolucao()
 
-    # -------------------------
     # LISTAGENS
-    # -------------------------
     def listar_livros(self):
         if not self.livros:
             print("Nenhum livro cadastrado.")
