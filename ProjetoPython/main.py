@@ -3,6 +3,7 @@ import os
 
 def menu():
     biblioteca = Biblioteca()
+    biblioteca.carregar_dados()
 
     while True:
         print("\n===== SISTEMA DE BIBLIOTECA =====")
@@ -13,7 +14,9 @@ def menu():
         print("5. Realizar Empréstimo")
         print("6. Devolver Livro")
         print("7. Listar Empréstimos")
-        print("0. Sair")
+        print("8. Remover Livro")
+        print("9. Remover Usuário")
+        print("0. Sair e Salvar")
 
         opcao = input("Escolha uma opção: ")
         os.system("cls")
@@ -25,8 +28,8 @@ def menu():
 
         elif opcao == "2":
             nome = input("Nome do usuário: ")
-            email = input("Email: ")
-            biblioteca.cadastrar_usuario(nome, email)
+            cpf = input("Cpf: ")
+            biblioteca.cadastrar_usuario(nome, cpf)
 
         elif opcao == "3":
             biblioteca.listar_livros()
@@ -52,7 +55,15 @@ def menu():
         elif opcao == "7":
             biblioteca.listar_emprestimos()
 
+        elif opcao == "8":
+            try:
+                id_livro = int(input("ID do livro a remover: "))
+                biblioteca.remover_livro(id_livro)
+            except ValueError:
+                print("Entrada inválida!")
+
         elif opcao == "0":
+            biblioteca.salvar_dados()
             print("Encerrando o sistema...")
             break
 

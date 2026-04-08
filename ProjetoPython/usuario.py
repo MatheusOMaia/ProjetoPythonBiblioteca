@@ -1,11 +1,11 @@
 class Usuario:
-    def __init__(self, id, nome, email):
+    def __init__(self, id, nome, cpf):
         self.id = id
         self.nome = nome
-        self.email = email
+        self.cpf = cpf
 
     def exibir_info(self):
         print(f"ID: {self.id}")
         print(f"Nome: {self.nome}")
-        print(f"Email: {self.email}")
+        print(f"Cpf: {self.cpf}")
         print("-" * 30)

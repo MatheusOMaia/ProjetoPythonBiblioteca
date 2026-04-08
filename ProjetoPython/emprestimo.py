@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 class Emprestimo:
-    def __init__(self, id, usuario, livro, dias_para_devolucao=7):
+    def __init__(self, id, usuario, livro, dias_para_devolucao=7, carregando=False):
         self.id = id
         self.usuario = usuario
         self.livro = livro
@@ -9,11 +9,13 @@ class Emprestimo:
         self.data_devolucao = self.data_emprestimo + timedelta(days=dias_para_devolucao)
         self.devolvido = False
 
-        # Ao criar um empréstimo, o livro deixa de estar disponível
-        if livro.disponivel:
-            livro.disponivel = False
-        else:
-            raise Exception("Livro já está emprestado!")
+        # Primeiro vai checar se o empréstimo está sendo carregado do arquivo json ou não, pq quando realiza um emprestimo seta o livro pra
+        # indisponivel, mas quando tiver sendo carregado tem que ser igual oq está salvo.
+        if not carregando:
+            if livro.disponivel:
+                livro.disponivel = False
+            else:
+                raise Exception("Livro já está emprestado!")
 
     def registrar_devolucao(self):
         if not self.devolvido:

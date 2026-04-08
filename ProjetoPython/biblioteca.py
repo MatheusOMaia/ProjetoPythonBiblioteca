@@ -1,6 +1,8 @@
 from livro import Livro
 from usuario import Usuario
 from emprestimo import Emprestimo
+from datetime import datetime
+import json
 
 class Biblioteca:
     def __init__(self):
@@ -26,7 +28,7 @@ class Biblioteca:
         self.prox_id_usuario += 1
         print("Usuário cadastrado com sucesso!")
 
-    # BUSCAR LIVRO
+    # BUSCAR 
     def buscar_livro(self, id):
         for livro in self.livros:
             if livro.id == id:
@@ -45,7 +47,7 @@ class Biblioteca:
                 return emp
         return None
 
-    # EMPRÉSTIMO
+    # REALIZAR EMPRÉSTIMO
     def realizar_emprestimo(self, id_usuario, id_livro):
         usuario = self.buscar_usuario(id_usuario)
         livro = self.buscar_livro(id_livro)
@@ -104,3 +106,118 @@ class Biblioteca:
 
         for emp in self.emprestimos:
             emp.exibir_info()
+
+    # REMOÇÃO
+
+    def remover_livro(self, id_livro):
+        livro = self.buscar_livro(id_livro)
+
+        if not livro:
+            print("Livro não encontrado.")
+            return
+        
+        # Verifica se o livro não está sendo emprestado
+        if not livro.disponivel:
+            print("Não é possível remover um livro emprestado.")
+            return
+        
+        self.livros.remove(livro)
+        print("Livro removido com sucesso!")
+
+    def remover_usuario(self, id_usuario):
+        usuario = self.buscar_usuario(id_usuario)
+
+        if not usuario:
+            print("Usuário não encontrado.")
+            return
+
+        # Verifica se o usuário tem empréstimos ativos
+        for emp in self.emprestimos:
+            if emp.usuario.id == id_usuario and not emp.devolvido:
+                print("Usuário possui empréstimos ativos e não pode ser removido.")
+                return
+
+        self.usuarios.remove(usuario)
+        print("Usuário removido com sucesso!")
+
+        # SALVAR DADOS EM JSON
+    def salvar_dados(self):
+        dados = {
+            "livros": [],
+            "usuarios": [],
+            "emprestimos": []
+        }
+
+        # LIVROS
+        for livro in self.livros:
+            dados["livros"].append({
+                "id": livro.id,
+                "titulo": livro.titulo,
+                "autor": livro.autor,
+                "disponivel": livro.disponivel
+            })
+
+        # USUÁRIOS
+        for usuario in self.usuarios:
+            dados["usuarios"].append({
+                "id": usuario.id,
+                "nome": usuario.nome,
+                "cpf": usuario.cpf
+            })
+
+        # EMPRÉSTIMOS
+        for emp in self.emprestimos:
+            dados["emprestimos"].append({
+                "id": emp.id,
+                "usuario_id": emp.usuario.id,
+                "livro_id": emp.livro.id,
+                "data_emprestimo": emp.data_emprestimo.strftime("%Y-%m-%d %H:%M:%S"),
+                "data_devolucao": emp.data_devolucao.strftime("%Y-%m-%d %H:%M:%S"),
+                "devolvido": emp.devolvido
+            })
+
+        with open("dados.json", "w") as f:
+            json.dump(dados, f, indent=4)
+
+        print("Dados salvos com sucesso!")
+    # CARREGAR DADOS EM JSON
+    def carregar_dados(self):
+        try:
+            with open("dados.json", "r") as f:
+                dados = json.load(f)
+
+            # CARREGAR LIVROS
+            for l in dados["livros"]:
+                livro = Livro(l["id"], l["titulo"], l["autor"])
+                livro.disponivel = l["disponivel"]
+                self.livros.append(livro)
+
+            # CARREGAR USUARIOS
+            for u in dados["usuarios"]:
+                usuario = Usuario(u["id"], u["nome"], u["cpf"])
+                self.usuarios.append(usuario)
+
+            # CARREGAR EMPRESTIMOS
+            for e in dados["emprestimos"]:
+                usuario = self.buscar_usuario(e["usuario_id"])
+                livro = self.buscar_livro(e["livro_id"])
+
+                emp = Emprestimo(e["id"], usuario, livro, carregando=True)
+                emp.data_emprestimo = datetime.strptime(e["data_emprestimo"], "%Y-%m-%d %H:%M:%S")
+                emp.data_devolucao = datetime.strptime(e["data_devolucao"], "%Y-%m-%d %H:%M:%S")
+                emp.devolvido = e["devolvido"]
+
+                self.emprestimos.append(emp)
+
+            # ATUALIZAR IDS
+            if self.livros:
+                self.prox_id_livro = max(l.id for l in self.livros) + 1
+            if self.usuarios:
+                self.prox_id_usuario = max(u.id for u in self.usuarios) + 1
+            if self.emprestimos:
+                self.prox_id_emprestimo = max(e.id for e in self.emprestimos) + 1
+
+            print("Dados carregados com sucesso!")
+
+        except FileNotFoundError:
+            print("Arquivo de dados não encontrado. Iniciando sistema vazio.")
